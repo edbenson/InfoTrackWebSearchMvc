@@ -5,4 +5,3 @@ obj
 *.dll
 *.pdb
 *.csproj.user
-/InfoTrackWebSearch/wwwroot/lib

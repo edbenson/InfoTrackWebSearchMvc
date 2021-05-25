@@ -30,7 +30,7 @@ namespace InfoTrackWebSearch.SearchEngine
             webSearch.FoundPositions = matches
                 .Select((s, i) => (s.Value, i))
                 .Where(m => m.Value.Contains(webSearch.ScanForUrl, StringComparison.InvariantCultureIgnoreCase))
-                .Select(m => m.i)
+                .Select(m => m.i+1)
                 .ToArray();
 
             _searchHistory.AddSearch(webSearch);

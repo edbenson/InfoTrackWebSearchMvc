@@ -16,11 +16,12 @@ namespace InfoTrackWebSearch.SearchEngine
 
         public async Task<WebSearch> Search(WebSearch webSearch)
         {
-            var uri = new Uri($"https://www.bing.co.uk/search?count={webSearch.SearchQuery}&q={webSearch.SearchQuery}", UriKind.Absolute);
+            var uri = new Uri($"https://www.bing.co.uk/search?count={webSearch.SearchCount}&q={webSearch.SearchQuery}", UriKind.Absolute);
 
             webSearch.SearchTime = DateTime.Now;
-            var client = new WebClient();
-            var searchResult = await client.DownloadStringTaskAsync(uri);
+            var client = new HttpClient();
+            var httpResponse = await client.GetAsync(uri);
+            var searchResult = await httpResponse.Content.ReadAsStringAsync();
 
             // Chop the result URLs 
             var matches = Regex.Matches(searchResult, "<a href=(.+?>)");
@@ -29,7 +30,7 @@ namespace InfoTrackWebSearch.SearchEngine
             webSearch.FoundPositions = matches
                 .Select((s, i) => (s.Value, i))
                 .Where(m => m.Value.Contains(webSearch.ScanForUrl, StringComparison.InvariantCultureIgnoreCase))
-                .Select(m => m.i)
+                .Select(m => m.i + 1)
                 .ToArray();
 
             _searchHistory.AddSearch(webSearch);
